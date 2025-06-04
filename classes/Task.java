@@ -1,33 +1,28 @@
 package classes;
 
-
-import java.sql.Date;
+import java.time.LocalDate;
 
 
 public class Task {
 
     private String name;
-    private Date date;
+    private LocalDate date;
     private String description;
-    private String priority;
-    private Boolean status;
+    private String status;
 
-    public Task(String name, Date date, String description, String priority, Boolean status)
+    public Task(String name, LocalDate date, String description, String status)
     {
         this.name = name;
         this.date = date;
         this.description = description;
-        this.priority = priority;
         this.status = status;
     }
-    public Date getDate() { return date;}
+    public LocalDate getDate() { return date;}
     
     public String getName() { return name;}
     
     public String getDescription() { return description;}
     
-    public String getPriority() { return priority;}
-    
-    public Boolean getStatus() { return status;}
+    public String getStatus() { return status;}
 
 }
