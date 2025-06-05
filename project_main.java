@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -62,24 +63,42 @@ public class project_main {
                 {
                     System.out.println(task.getName() + "-" + task.getDate());
                 }
-
+                
                 String removeString = myObj.nextLine();
 
                 Task taskToRemove = null;
-                
-                taskManager.removeTask(Task.valueOf(task.getName(removeString)));
-                
+
+
+                // Loop through the task names and compare to the one we want to remove.
+                for (Task task: taskManager.getTasks())
+                {
+                    if(task.getName().equalsIgnoreCase(removeString))
+                    {
+                        taskToRemove = task;
+                        break;
+                    }
+                }
+                //update user if task is removed
+                System.out.println(taskToRemove != null ? "Removed " + removeString : "Failed to remove task");                    
+
 
             }
             else if (input == "3" || input == "View Tasks"){
-
+                System.out.println("Which task would you like to remove?");
+                for (Task task : taskManager.getTasks())
+                {
+                    System.out.println(task.getName() + "-" + task.getDate());
+                }
             }
 
             else{
                 System.out.println("ERROR: input one of the choices above.");
+                return;
             }
         }
         
+        
+
 
         
     }
