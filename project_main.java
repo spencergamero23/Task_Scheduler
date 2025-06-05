@@ -18,7 +18,7 @@ public class project_main {
 //task manager: adds tasks, remove tasks, retrieves tasks by date
 
     public static void main(String[] args) {
-        Scanner myObj = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         String input = "";
         TaskManager taskManager = new TaskManager();
 
@@ -30,22 +30,23 @@ public class project_main {
             System.out.println("3. View Tasks");
             System.out.println("4. Exit");
 
-            input = myObj.nextLine();
+            input = sc.nextLine();
 
-            if (input == "1" || input == "Add Task"){
+            if (input.equals("1") || input.equalsIgnoreCase("Add Task"))
+            {
                 // Getting name
                 System.out.println("What's the name of this task?");
-                String name = myObj.nextLine();
+                String name = sc.nextLine();
                 
                 // Getting date
-                System.out.println("What date should this be done? Format:(MMMM dd yyyy)");
-                String dateString = myObj.nextLine();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
+                System.out.println("What date should this be done? Format:(August 12 2025)");
+                String dateString = sc.nextLine();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", Locale.ENGLISH);
                 LocalDate date = LocalDate.parse(dateString, formatter);
 
                 // Getting description
                 System.out.println("Write a description for the task.");
-                String description  = myObj.nextLine();
+                String description  = sc.nextLine();
 
                 // Current Status
                 String status = "Incomplete";
@@ -64,7 +65,7 @@ public class project_main {
                     System.out.println(task.getName() + "-" + task.getDate());
                 }
                 
-                String removeString = myObj.nextLine();
+                String removeString = sc.nextLine();
 
                 Task taskToRemove = null;
 
@@ -83,7 +84,7 @@ public class project_main {
 
 
             }
-            else if (input == "3" || input == "View Tasks"){
+            else if (input.equals("3") || input.equalsIgnoreCase( "View tasks")){
                 System.out.println("Which task would you like to remove?");
                 for (Task task : taskManager.getTasks())
                 {
