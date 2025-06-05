@@ -6,6 +6,7 @@ import  java.util.Scanner;
 import classes.Task;
 import classes.TaskManager;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 
 public class project_main {
@@ -85,12 +86,31 @@ public class project_main {
 
             }
             else if (input.equals("3") || input.equalsIgnoreCase( "View tasks")){
-                System.out.println("Which task would you like to remove?");
+                System.out.println("Here's your list of tasks:");
+                System.out.println();
+                
+                LocalDate previousDate = null;
+
                 for (Task task : taskManager.getTasks())
                 {
-                    System.out.println(task.getName() + "-" + task.getDate());
+                    LocalDate currentDate = task.getDate();
+                    if(previousDate == null || !currentDate.equals(previousDate))
+                    {
+                        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy", Locale.ENGLISH));
+                        System.out.println(formattedDate + ":");
+                        previousDate = currentDate;
+                        
+                    }
+        
+                    System.out.println("  - " + task.getName());
+                    System.out.println("    " + task.getDescription());
+                    System.out.println();
                 }
             }
+            else if (input.equals("4") || input.equalsIgnoreCase( "Exit")){
+                System.out.println("Thanks for using the app! See you soon.");
+                // Lets try fixing this
+            } 
 
             else{
                 System.out.println("ERROR: input one of the choices above.");
@@ -105,3 +125,18 @@ public class project_main {
     }
 
 }
+
+//I want to list the tasks by date. So everytime theres a different date it'll print out the day. How do I go about doing this?
+// we are iterating through a list [fart,pee,poop,chungus]
+//If we do a for loop it'll go through each one:
+// August 12th 2025:
+//  Fart
+// September 12th 2025:
+//  Pee
+// October 12th 2025:
+//  poop
+// 
+// However what happens when we have two dates that are side by side?
+// [Fart(August),peee(August),Poop(August)]
+// I think we write an if statement where if the previous .getDate() value is equal to the current we just don't print out the date.
+// However if that's not the case we will print out the new value. No need to worry about disorginization either because they are ordered by date already!
