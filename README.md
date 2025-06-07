@@ -19,7 +19,7 @@ Exit asks if you want to save your file. If you say yes it'll ask for a name and
 My reasoning for writing this program is to help better my life.
 
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/4ZS9xjb1KvI)
 
 # Development Environment
 
