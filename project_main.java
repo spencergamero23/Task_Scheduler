@@ -168,7 +168,7 @@ public class project_main {
                         }
                     }
 
-                    System.out.println("Loaded " + loadedCount + "task(s) from file");
+                    System.out.println("Loaded " + loadedCount + " task(s) from file");
                 } catch(IOException e){
                     System.out.println("Error reading file: " + e.getMessage());
                 }
@@ -217,7 +217,6 @@ public class project_main {
 
             else{
                 System.out.println("ERROR: input one of the choices above.");
-                return;
             }
         }
         
