@@ -56,8 +56,6 @@ public class project_main {
                     }
                 }
                 
-                
-
                 // Getting description
                 System.out.println("Write a description for the task.");
                 String description  = sc.nextLine();
@@ -138,28 +136,53 @@ public class project_main {
                 String fileName = sc.nextLine().trim();
 
                 File file = new File(fileName + ".txt");
-                
-                try {
-                File myObj = new File("filename.txt");
-                Scanner myReader = new Scanner(myObj);
-                while (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    System.out.println(data);
+
+                if (!file.exists()){
+                    System.out.println("File not found: "+ fileName);
+                    return;
                 }
-                    myReader.close();
-                } catch (FileNotFoundException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                try(Scanner reader = new Scanner(file)){
+                    int loadedCount = 0;
+
+                    while(reader.hasNextLine()){
+                        String line = reader.nextLine();
+                        String[] parts = line.split("::");
+
+                        if (parts.length >= 3) {
+                            try{
+                                String name = parts[0];
+                                LocalDate date = LocalDate.parse(parts[1], formatter);
+                                String description = parts[2];
+
+                                taskManager.addTask(new Task(name, date, description));
+                                loadedCount++;
+                            } catch(Exception e){
+                                System.out.println("Skipped incomplete task: " + line);
+                            }
+                            
+                        } else{
+                            System.out.println("Skipped incomplete task: " + line);
+                        }
+                    }
+
+                    System.out.println("Loaded " + loadedCount + "task(s) from file");
+                } catch(IOException e){
+                    System.out.println("Error reading file: " + e.getMessage());
                 }
 
             }
+
             else if (input.equals("5") || input.equalsIgnoreCase( "Exit")){
 
                 System.out.println("Would you like to save your information? (Y/N)");
                 String choiceString = sc.nextLine().trim().toLowerCase();
 
-                if (!choiceString.equals("yes")) {
+                if (!choiceString.equals("y")) {
                     System.out.println("Thanks for using the app! See you soon.");
+                    return;
                 }
 
                 System.out.println("What's the name of the file? (No file extension: .txt)");
@@ -178,7 +201,7 @@ public class project_main {
 
                     FileWriter writer = new FileWriter(file);
                     for (Task task : taskManager.getTasks()) {
-                        writer.write(task.getName() + "::"+task.getDate() + "::"+task.getDescription());
+                        writer.write(task.getName() + "::"+task.getDate() + "::"+task.getDescription() + "\n");
                     }
 
                     writer.close();
