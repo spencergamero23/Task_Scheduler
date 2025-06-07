@@ -1,22 +1,20 @@
 import java.io.Console;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import  java.util.Scanner;
 import classes.Task;
 import classes.TaskManager;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 
 public class project_main {
-// What does this task manager do?
-// Prompt: Task Scheduler with Calendar: Create a task scheduler with an integrated calendar that allows users to manage events and tasks.
-// Our project is the task scheduler!
-// It includes: an integrated calendar. What does the calendar do? It allows user to manage events and tasks!
-// Two classes we would need is:
-//task: name, date, description, and status
-//task manager: adds tasks, remove tasks, retrieves tasks by date
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -24,12 +22,13 @@ public class project_main {
         TaskManager taskManager = new TaskManager();
 
         System.out.println("Hello and welcome to a task manager!");
-        while(input != "4" || input != "Exit"){
+        while(!input.equals("5") && !input.equalsIgnoreCase("Exit")){
             System.out.println("Menu:");
             System.out.println("1. Add Task");
             System.out.println("2. Remove Task");
             System.out.println("3. View Tasks");
-            System.out.println("4. Exit");
+            System.out.println("4. Load File");
+            System.out.println("5. Exit");
 
             input = sc.nextLine();
 
@@ -40,19 +39,31 @@ public class project_main {
                 String name = sc.nextLine();
                 
                 // Getting date
-                System.out.println("What date should this be done? Format:(August 12 2025)");
-                String dateString = sc.nextLine();
+                LocalDate date = null;
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", Locale.ENGLISH);
-                LocalDate date = LocalDate.parse(dateString, formatter);
+
+                while(true){
+                    System.out.println("What date should this be done? Format:(August 12 2025)");
+                    String dateString = sc.nextLine();
+
+                    try{
+                        date = LocalDate.parse(dateString, formatter);
+                        break;
+                    }
+                    catch(DateTimeParseException e){
+                        
+                        System.out.println("Invalid date format please try again.");
+                    }
+                }
+                
+                
 
                 // Getting description
                 System.out.println("Write a description for the task.");
                 String description  = sc.nextLine();
 
-                // Current Status
-                String status = "Incomplete";
 
-                Task task = new Task(name,date,description,status);
+                Task task = new Task(name,date,description);
 
                 taskManager.addTask(task);
                 taskManager.sortTasksByDate();
@@ -61,9 +72,21 @@ public class project_main {
             }
             else if (input.equals("2") || input.equalsIgnoreCase( "Remove Task")){
                 System.out.println("Which task would you like to remove?");
+               LocalDate previousDate = null;
+
                 for (Task task : taskManager.getTasks())
                 {
-                    System.out.println(task.getName() + "-" + task.getDate());
+                    LocalDate currentDate = task.getDate();
+                    if(previousDate == null || !currentDate.equals(previousDate))
+                    {
+                        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy", Locale.ENGLISH));
+                        System.out.println(formattedDate + ":");
+                        previousDate = currentDate;
+                        
+                    }
+        
+                    System.out.println("  - " + task.getName());
+                    System.out.println();
                 }
                 
                 String removeString = sc.nextLine();
@@ -77,6 +100,7 @@ public class project_main {
                     if(task.getName().equalsIgnoreCase(removeString))
                     {
                         taskToRemove = task;
+                        taskManager.removeTask(taskToRemove);
                         break;
                     }
                 }
@@ -107,9 +131,65 @@ public class project_main {
                     System.out.println();
                 }
             }
-            else if (input.equals("4") || input.equalsIgnoreCase( "Exit")){
-                System.out.println("Thanks for using the app! See you soon.");
-                // Lets try fixing this
+            else if (input.equals("4") || input.equalsIgnoreCase( "Load")){
+
+                 System.out.println("What's the name of the file? (No file extension: .txt)");
+
+                String fileName = sc.nextLine().trim();
+
+                File file = new File(fileName + ".txt");
+                
+                try {
+                File myObj = new File("filename.txt");
+                Scanner myReader = new Scanner(myObj);
+                while (myReader.hasNextLine()) {
+                    String data = myReader.nextLine();
+                    System.out.println(data);
+                }
+                    myReader.close();
+                } catch (FileNotFoundException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
+
+            }
+            else if (input.equals("5") || input.equalsIgnoreCase( "Exit")){
+
+                System.out.println("Would you like to save your information? (Y/N)");
+                String choiceString = sc.nextLine().trim().toLowerCase();
+
+                if (!choiceString.equals("yes")) {
+                    System.out.println("Thanks for using the app! See you soon.");
+                }
+
+                System.out.println("What's the name of the file? (No file extension: .txt)");
+
+                String fileName = sc.nextLine().trim();
+
+                File file = new File(fileName + ".txt");
+
+                try{
+                    if(file.createNewFile()){
+                        System.out.println("File created: " + file.getName());
+
+                    }else{
+                        System.out.println("File already exists. Overwriting...");
+                    }
+
+                    FileWriter writer = new FileWriter(file);
+                    for (Task task : taskManager.getTasks()) {
+                        writer.write(task.getName() + "::"+task.getDate() + "::"+task.getDescription());
+                    }
+
+                    writer.close();
+                    System.out.println("Succesfully wrote to the file.");
+
+                } catch(IOException e){
+                    System.out.println("An error ocurred.");
+                    e.printStackTrace();
+                }
+                
+               System.out.println("Thanks for using the app! See you soon.");
             } 
 
             else{
@@ -118,25 +198,6 @@ public class project_main {
             }
         }
         
-        
-
-
-        
     }
 
 }
-
-//I want to list the tasks by date. So everytime theres a different date it'll print out the day. How do I go about doing this?
-// we are iterating through a list [fart,pee,poop,chungus]
-//If we do a for loop it'll go through each one:
-// August 12th 2025:
-//  Fart
-// September 12th 2025:
-//  Pee
-// October 12th 2025:
-//  poop
-// 
-// However what happens when we have two dates that are side by side?
-// [Fart(August),peee(August),Poop(August)]
-// I think we write an if statement where if the previous .getDate() value is equal to the current we just don't print out the date.
-// However if that's not the case we will print out the new value. No need to worry about disorginization either because they are ordered by date already!
